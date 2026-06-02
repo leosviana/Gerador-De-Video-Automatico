@@ -14,14 +14,15 @@
             <label>Arquivo MP4:</label><br>
             <input type="file" accept=".mp4" placeholder="Insira o arquivo de vídeo mp4"><br>
         </div>
-        <div>
-            <video id="previewVideo" controls>        
-            </video>
+        <div class="preview-container">
+            <canvas id="previewCanvas"></canvas>
         </div>      
         <div>
             <button class="btExportar">Exportar Vídeo</button>
         </div>        
     </div>
+
+<script src="js/app.js"></script>
 
 </body>
 </html>
