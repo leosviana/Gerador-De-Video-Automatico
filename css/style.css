@@ -33,8 +33,6 @@ h1{
     position: relative;
     width: 100%;
     max-width: 300px;
-    max-height: 300px;
-    height: 100%;
     aspect-ratio: 16 / 9;
     margin: auto;
     background: #000;

@@ -1,13 +1,19 @@
 const videoInput = document.getElementById("videoInput"); // Campo de upload do video principal
-const audioInput = document.getElementById("audioInput"); // Campo de upload do audio 
+const audioInput = document.getElementById("audioInput"); // Campo de upload do audio
+let videoFile = null; //Armazena o arquivo de video
+let audioFile = null; //Armazena o arquivo de audio
+//CANVA DE VIDEO PRINCIPAL:
 const canvas = document.getElementById("previewCanvas"); // Canvas onde sera exibido o preview
 const ctx = canvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos
-// Define resolucao interna do canvas:
-canvas.width = 1280;
-canvas.height = 720;
-// Armazena os arquivos selecionados:
-let videoFile = null;
+canvas.width = 1280; //Define resolucao de largura do canvas
+canvas.height = 720; //Define resolucao de altura do canvas
+//CHROMAKEY - CANVA DE VIDEO OVERLAY(INSCREVA-SE):
+const chromaCanvas = document.createElement("canvas"); //Canva invisivel para processar o overlay
+const chromaCtx = chromaCanvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos do overlay
+chromaCanvas.width = 500; //Define resolucao de largura do canvas
+chromaCanvas.height = 500; //Define resolucao de altura do canvas
 let audioFile = null;
+const chromaStrength = 80; //Configuracao da intensidade da remocao da cor verde
 
 // =======================================
 // VIDEO PRINCIPAL
@@ -59,16 +65,32 @@ function render() {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
     // ===================================
-    // DESENHA O OVERLAY
+    // DESENHA O OVERLAY COM CHROMA KEY
     // ===================================
-    if (overlayVideo.readyState >= 2) {        
-        const width = 250; // Tamanho do overlay horizontalmente
-        const height = 140; // Tamanho do overlay verticalmente
-        const x = (canvas.width - width) / 2; // Centraliza horizontalmente        
-        const y = (canvas.height - height) / 2; // Centraliza verticalmente
-        ctx.drawImage(overlayVideo, x, y, width, height);
+    if(overlayVideo.readyState >= 2) {
+        chromaCtx.drawImage(0, 0, chromaCanvas.width, chromaCanvas.height); //Desenha o frame atual do overlay no canva auxiliar
+        const frame = chromaCtx.getImageData(0, 0, chromaCanvas.width, chromaCanvas.height); //Captura todos os pixels do frame
+        const pixels = frame.data; //Array contendo RGBA
+        const greenLimit = 100 + chromaStrength; //Calcula o nivel de remocao de verde
+        //Percorre todos os pixels do video overlay
+        for(let i = 0; i < pixels.length; i += 4){
+            const r = pixels[i]; //Canal vermelho
+            const g = pixels[i + 1]; //Canal verde
+            const b = pixels[i + 2]; //Canal azul
+            //Torna o pixel transparente;
+            if(g > greenLimit && r < 120 && b < 120){
+                pixels[i + 3] + 0; 
+            }
+        }        
+        chromaCtx.putImagemData(frame, 0, 0); //Atualiza a imagem processada
+        const width = 250; //Define tamanho de largura do overlay
+        const height = 140; //Define tamanho de altura do overlay
+        const x = (canvas.width - width) / 2; //Centraliza horizontalmente
+        const y = (canvas.height - height) / 2; //Centraliza verticalmente
+        ctx.drawImage(chromaCanvas, x, y, width, height); //Desenha o resultado final sem a cor verde
+
     }
-    //console.log(video.readyState);
+    
 }
 
 // Inicia o loop
