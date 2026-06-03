@@ -20,6 +20,8 @@ video.loop = true; // Faz o video repetir infinitamente
 // OVERLAY (SE INSCREVA)
 // =======================================
 const overlayVideo = document.createElement("video"); // Cria um video invisivel para o overlay
+video.preload = "auto";
+overlayVideo.preload = "auto";
 overlayVideo.src = "assets/se-inscreva-youtube.mp4"; // Caminho do overlay
 overlayVideo.muted = true; // Sem audio
 overlayVideo.loop = true; // Repetir continuamente
@@ -34,7 +36,7 @@ videoInput.addEventListener("change", (event) => {
     video.src = URL.createObjectURL(videoFile); // Cria URL temporaria para reproducao
 
     //Aguarda o navegador carregar os metadados do video
-    video.onloadmetadata = () =>{
+    video.onloadedmetadata = () =>{
         console.log(video.videoWidth, video.videoHeight); //Exibe no console as dimensoes reais do video
         document.querySelector(".preview-container") //Ajusta automaticamente a proporcao do preview
             .style.aspectRatio = `${video.videoWidth}/${video.videoHeight}`;
@@ -66,6 +68,7 @@ function render() {
         const y = (canvas.height - height) / 2; // Centraliza verticalmente
         ctx.drawImage(overlayVideo, x, y, width, height);
     }
+    console.log(video.readyState);
 }
 
 // Inicia o loop
