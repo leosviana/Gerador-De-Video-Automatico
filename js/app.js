@@ -167,8 +167,8 @@ async function exportVideo(){
     const exportHeight = isVertical ? 1920 : 1080; //Formato video curto
     const oldWidth = canvas.width; //Salva o tamanho altura atual
     const oldHeight = canvas.height; //Salva o tamanho largura atual
-    const.width = exportWidth;
-    const.height = exportHeight;
+    const width = exportWidth;
+    const height = exportHeight;
     const stream = canvas.captureStream(30); //Captura o canvas como video como 30 FPS
     const audioStream = audio.captureStream(); //Captura o audio MP3
     audioStream //Adicionar audio ao stream
