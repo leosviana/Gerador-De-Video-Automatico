@@ -29,14 +29,17 @@ h1{
 
 .preview-container{
     border: 1px solid #333;
-    width: 100%;
-    height: 600px;
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    margin: auto;
     background: #000;
 }
 
 #previewCanvas{
     width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
 button{
