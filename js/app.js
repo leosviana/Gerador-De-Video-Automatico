@@ -36,7 +36,7 @@ videoInput.addEventListener("change", (event) => {
     video.src = URL.createObjectURL(videoFile); // Cria URL temporaria para reproducao
 
     //Aguarda o navegador carregar os metadados do video
-    video.onloadedmetadata = () =>{
+    video.onloadedmetadata = () => {
         console.log(video.videoWidth, video.videoHeight); //Exibe no console as dimensoes reais do video
         document.querySelector(".preview-container") //Ajusta automaticamente a proporcao do preview
             .style.aspectRatio = `${video.videoWidth}/${video.videoHeight}`;
