@@ -193,7 +193,7 @@ async function exportVideo(){
         {
             recorder.stop();
         },
-        audio.duration * 1000;
+        audio.duration * 1000
     );
 
 
