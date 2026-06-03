@@ -7,7 +7,7 @@ const canvas = document.getElementById("previewCanvas"); //Canvas onde sera exib
 const ctx = canvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos
 canvas.width = 1280; //Define resolucao de largura do canvas
 canvas.height = 720; //Define resolucao de altura do canvas
-const loopMode = getElementById("loopMode"); //Seleciona o modo de repeticao
+const loopMode = document.getElementById("loopMode"); //Seleciona o modo de repeticao
 let playingReverse = false; //Indica se o video esta voltando
 let reverseFPS = 30; //Velocidade de retorno
 //CHROMAKEY - CANVA DE VIDEO OVERLAY(INSCREVA-SE):
