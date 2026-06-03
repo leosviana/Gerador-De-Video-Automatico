@@ -23,7 +23,7 @@ h1{
 .upload-area{
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 5px;
     margin-bottom: 20px;
 }
 
