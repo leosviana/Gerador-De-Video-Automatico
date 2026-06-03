@@ -14,11 +14,16 @@
             <input type="file" id="audioInput" accept=".mp3"><br>
             <label>Arquivo MP4:</label><br>
             <input type="file" id="videoInput" accept=".mp4"><br>
+            <label>Repetição:</label>
+            <select id="loopMode">
+                <option value="loop">Loop</option>
+                <option value="reverse">Reverso</option>
+            </select>
         </div>
         <div class="preview-container">
             <canvas id="previewCanvas"></canvas>
             <video id="overlayVideo" muted autoplay loop playsinline></video>
-        </div>  
+        </div>
         <div>
             <button class="btExportar">Exportar Vídeo</button>
         </div>        

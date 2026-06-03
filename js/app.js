@@ -7,6 +7,9 @@ const canvas = document.getElementById("previewCanvas"); //Canvas onde sera exib
 const ctx = canvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos
 canvas.width = 1280; //Define resolucao de largura do canvas
 canvas.height = 720; //Define resolucao de altura do canvas
+const loopMode = getElementById("loopMode"); //Seleciona o modo de repeticao
+let playingReverse = false; //Indica se o video esta voltando
+let reverseFPS = 30; //Velocidade de retorno
 //CHROMAKEY - CANVA DE VIDEO OVERLAY(INSCREVA-SE):
 const chromaCanvas = document.createElement("canvas"); //Canva invisivel para processar o overlay
 const chromaCtx = chromaCanvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos do overlay
@@ -71,7 +74,7 @@ audioInput.addEventListener("change", (event) =>{
 });
 
 // =======================================
-// LOOP DE RENDERIZACAO
+// LOOP DE RENDERIZACAO (RENDER)
 // =======================================
 function render() {    
     requestAnimationFrame(render); //Executa a funcao continuamente    
@@ -81,6 +84,28 @@ function render() {
     // DESENHA O VIDEO PRINCIPAL
     // ===================================
     if (video.readyState >= 2) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        //LOOP NORMAL
+        if(loopMode.value === "loop"){
+            video.loop = true;
+        }
+        //LOOP REVERSO
+        else{
+            video.loop = false;            
+            if(video.currentTime >= video.duration - 0.05 && !playingReverse){ //Chegou ao final
+                playingReverse = true;
+            }
+            if(playingReverse){
+                video.pause();
+                video.currentTime -= 1 / reverseFPS;
+                if(video.currentTime <= 0){ //Voltou ao inicio
+                    playingReverse = false;
+                    video.currentTime = 0;
+                    video.play();
+                }
+            }
+        }
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
     // ===================================
