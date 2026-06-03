@@ -189,17 +189,12 @@ async function exportVideo(){
     recorder.start(); //Inicia gravacao
     
     //Quando terminar...
-    setTimeourt(() => 
+    setTimeout(() => 
         {
             recorder.stop();
         },
         audio.duration * 1000
     );
-
-
-
-
-
 
 }
 
