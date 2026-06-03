@@ -32,7 +32,7 @@ h1{
     border: 1px solid #333;
     position: relative;
     width: 100%;
-    max-width: 1280px;
+    max-width: 600px;
     aspect-ratio: 16 / 9;
     /*height: auto;*/
     margin: auto;
