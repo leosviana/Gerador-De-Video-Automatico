@@ -12,7 +12,7 @@ const chromaCanvas = document.createElement("canvas"); //Canva invisivel para pr
 const chromaCtx = chromaCanvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos do overlay
 chromaCanvas.width = 500; //Define resolucao de largura do canvas
 chromaCanvas.height = 500; //Define resolucao de altura do canvas
-const chromaStrength = 80; //Configuracao da intensidade da remocao da cor verde
+const chromaStrength = 30; //Configuracao da intensidade da remocao da cor verde
 
 // =======================================
 // VIDEO PRINCIPAL
@@ -67,7 +67,7 @@ function render() {
     // DESENHA O OVERLAY COM CHROMA KEY
     // ===================================
     if(overlayVideo.readyState >= 2) {
-        chromaCtx.drawImage(0, 0, chromaCanvas.width, chromaCanvas.height); //Desenha o frame atual do overlay no canva auxiliar
+        chromaCtx.drawImage(overlayVideo, 0, 0, chromaCanvas.width, chromaCanvas.height); //Desenha o frame atual do overlay no canva auxiliar
         const frame = chromaCtx.getImageData(0, 0, chromaCanvas.width, chromaCanvas.height); //Captura todos os pixels do frame
         const pixels = frame.data; //Array contendo RGBA
         const greenLimit = 100 + chromaStrength; //Calcula o nivel de remocao de verde
@@ -78,10 +78,10 @@ function render() {
             const b = pixels[i + 2]; //Canal azul
             //Torna o pixel transparente;
             if(g > greenLimit && r < 120 && b < 120){
-                pixels[i + 3] + 0; 
+                pixels[i + 3] = 0; //0 = totalmente transparente
             }
         }        
-        chromaCtx.putImagemData(frame, 0, 0); //Atualiza a imagem processada
+        chromaCtx.putImageData(frame, 0, 0); //Atualiza a imagem processada
         const width = 250; //Define tamanho de largura do overlay
         const height = 140; //Define tamanho de altura do overlay
         const x = (canvas.width - width) / 2; //Centraliza horizontalmente
