@@ -16,6 +16,8 @@ const chromaCtx = chromaCanvas.getContext("2d"); // Contexto 2D do canvas para d
 chromaCanvas.width = 500; //Define resolucao de largura do canvas
 chromaCanvas.height = 500; //Define resolucao de altura do canvas
 const chromaStrength = 30; //Configuracao da intensidade da remocao da cor verde
+//BOTAO EXPORTAR
+const btnExportar = document.getElementById("btnExportar");
 
 // =======================================
 // AUDIO PRINCIPAL
@@ -145,10 +147,39 @@ function render() {
         const x = (canvas.width - width) / 2; //Centraliza horizontalmente
         const y = (canvas.height - height) / 2; //Centraliza verticalmente
         ctx.drawImage(chromaCanvas, x, y, width, height); //Desenha o resultado final sem a cor verde
-
-    }
-    
+    }   
 }
-
 // Inicia o loop
 render();
+
+// =======================================
+// EXPORTAR ARQUIVO COMPLETO (MP3 + VIDEO PRINCIPAL + INSCREVA-SE)
+// =======================================
+btnExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
+
+async function exportVideo(){
+    console.log("Iniciando exportação...");
+
+    const sourceWidth = video.videoWidth;
+    const sourceHeight = video.videoHeight;
+    const isVertical = sourceHeight > sourceWidth; //Verifica se o video e vertical
+    const exportWidth = isVertical ? 1080 : 1920; //Formato video longo
+    const exportHeight = isVertical ? 1920 : 1080; //Formato video curto
+    const oldWidth = canvas.width; //Salva o tamanho altura atual
+    const oldHeight = canvas.height; //Salva o tamanho largura atual
+    const.width = exportWidth;
+    const.height = exportHeight;
+    const stream = canvas.captureStream(30); //Captura o canvas como video como 30 FPS
+    const audioStream = audio.captureStream(); //Captura o audio MP3
+    audioStream //Adicionar audio ao stream
+        .getAudioTracks() 
+        .forEach(track => {
+            stream.addTrack(track);
+        });
+    const recorder = new MediaRecorder(stream, {mimeType: "video/webm"}); //Criando midia recorder
+    
+
+
+
+}
+
