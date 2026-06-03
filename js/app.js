@@ -64,7 +64,7 @@ videoInput.addEventListener("change", (event) => {
 // UPLOAD DO AUDIO PRINCIPAL
 // =======================================
 audioInput.addEventListener("change", (event) =>{
-    audioFile = event.targe.files[0]; //Arquivo selecionado
+    audioFile = event.target.files[0]; //Arquivo selecionado
     if(!audioFile) return; //Se nao existir arquivo de audio
     audio.src = URL.createObjectURL(audioFile); //Cria uma URL temporaria
 
@@ -98,7 +98,7 @@ function render() {
             lastOverlayPlayed = true; //Marca que foi executado impedindo novas execucoes
         }
     }
-
+    //Se overlay estiver sido iniciado e diferente de pausado e diferente de finalizado...
     if(overlayVideo.readyState >= 2 && !overlayVideo.paused && !overlayVideo.ended){
         chromaCtx.drawImage(overlayVideo, 0, 0, chromaCanvas.width, chromaCanvas.height); //Desenha o frame atual do overlay no canva auxiliar
         const frame = chromaCtx.getImageData(0, 0, chromaCanvas.width, chromaCanvas.height); //Captura todos os pixels do frame
