@@ -177,7 +177,27 @@ async function exportVideo(){
             stream.addTrack(track);
         });
     const recorder = new MediaRecorder(stream, {mimeType: "video/webm"}); //Criando midia recorder
+    const chunks = []; //Guardar chunks
+    recorder.ondataavailable = (event) => {
+        chunks.push(event.data);
+    }
+    recorder.onstop = async () => { //Avisa quando terminar
+        console.log("Render finalizado");
+    };
+    audio.currentTime = 0; //Reinicia audio
+    audio.play(); //Toca o audio
+    recorder.start(); //Inicia gravacao
     
+    //Quando terminar...
+    setTimeourt(() => 
+        {
+            recorder.stop();
+        },
+        audio.duration * 1000;
+    );
+
+
+
 
 
 
