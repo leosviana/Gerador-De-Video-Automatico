@@ -63,7 +63,7 @@ videoInput.addEventListener("change", (event) => {
 // =======================================
 // UPLOAD DO AUDIO PRINCIPAL
 // =======================================
-audioInput.addEventListener("change", (event) = >{
+audioInput.addEventListener("change", (event) =>{
     audioFile = event.targe.files[0]; //Arquivo selecionado
     if(!audioFile) return; //Se nao existir arquivo de audio
     audio.src = URL.createObjectURL(audioFile); //Cria uma URL temporaria
