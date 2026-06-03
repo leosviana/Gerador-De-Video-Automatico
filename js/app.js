@@ -68,7 +68,7 @@ function render() {
         const y = (canvas.height - height) / 2; // Centraliza verticalmente
         ctx.drawImage(overlayVideo, x, y, width, height);
     }
-    console.log(video.readyState);
+    //console.log(video.readyState);
 }
 
 // Inicia o loop
