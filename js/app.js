@@ -12,7 +12,6 @@ const chromaCanvas = document.createElement("canvas"); //Canva invisivel para pr
 const chromaCtx = chromaCanvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos do overlay
 chromaCanvas.width = 500; //Define resolucao de largura do canvas
 chromaCanvas.height = 500; //Define resolucao de altura do canvas
-let audioFile = null;
 const chromaStrength = 80; //Configuracao da intensidade da remocao da cor verde
 
 // =======================================
