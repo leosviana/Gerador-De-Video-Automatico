@@ -30,7 +30,7 @@ h1{
 .preview-container{ /*ALTERAR SOMENTE AQUI PARA TAMANHO DO RENDER */
     border: 1px solid #333;
     position: relative;
-    width: 600px;
+    width: 700px;
     /*height: auto;*/
     margin: auto;
     background: #000;
