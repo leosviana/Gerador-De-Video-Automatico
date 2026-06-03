@@ -1,103 +1,63 @@
-// Campo de upload do vídeo principal
-const videoInput = document.getElementById("videoInput");
-// Campo de upload do áudio (ainda não utilizado)
-const audioInput = document.getElementById("audioInput");
-// Canvas onde será exibido o preview
-const canvas = document.getElementById("previewCanvas");
-// Contexto 2D do canvas para desenhar imagens e vídeos
-const ctx = canvas.getContext("2d");
-// Define resolução interna do canvas
+const videoInput = document.getElementById("videoInput"); // Campo de upload do video principal
+const audioInput = document.getElementById("audioInput"); // Campo de upload do audio 
+const canvas = document.getElementById("previewCanvas"); // Canvas onde sera exibido o preview
+const ctx = canvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos
+// Define resolucao interna do canvas:
 canvas.width = 1280;
 canvas.height = 720;
-// Armazena os arquivos selecionados
+// Armazena os arquivos selecionados:
 let videoFile = null;
 let audioFile = null;
 
 // =======================================
-// VÍDEO PRINCIPAL
+// VIDEO PRINCIPAL
 // =======================================
-// Cria um elemento de vídeo invisível
-const video = document.createElement("video");
-// Remove áudio do preview
-video.muted = true;
-// Faz o vídeo repetir infinitamente
-video.loop = true;
+const video = document.createElement("video"); // Cria um elemento de video invisivel
+video.muted = true; // Remove audio do preview
+video.loop = true; // Faz o video repetir infinitamente
 
 // =======================================
 // OVERLAY (SE INSCREVA)
 // =======================================
-// Cria um vídeo invisível para o overlay
-const overlayVideo = document.createElement("video");
-// Caminho do overlay
-overlayVideo.src = "assets/se-inscreva-youtube.mp4";
-// Sem áudio
-overlayVideo.muted = true;
-// Repetir continuamente
-overlayVideo.loop = true;
-// Necessário para autoplay em alguns navegadores
-overlayVideo.playsInline = true;
+const overlayVideo = document.createElement("video"); // Cria um video invisivel para o overlay
+overlayVideo.src = "assets/se-inscreva-youtube.mp4"; // Caminho do overlay
+overlayVideo.muted = true; // Sem audio
+overlayVideo.loop = true; // Repetir continuamente
+overlayVideo.playsInline = true; // Necessario para autoplay em alguns navegadores
 
 // =======================================
-// UPLOAD DO VÍDEO PRINCIPAL
+// UPLOAD DO VIDEO PRINCIPAL
 // =======================================
-videoInput.addEventListener("change", (event) => {
-    // Pega o arquivo selecionado
-    videoFile = event.target.files[0];
-    // Se não existir arquivo, interrompe
-    if (!videoFile) return;
-    // Cria URL temporária para reprodução
-    video.src = URL.createObjectURL(videoFile);
-    // Inicia vídeo principal
-    video.play();
-    // Inicia overlay
-    overlayVideo.play();
+videoInput.addEventListener("change", (event) => {    
+    videoFile = event.target.files[0]; // Pega o arquivo selecionado    
+    if (!videoFile) return; // Se nao existir arquivo, interrompe    
+    video.src = URL.createObjectURL(videoFile); // Cria URL temporaria para reproducao    
+    video.play(); // Inicia video principal    
+    overlayVideo.play(); // Inicia overlay
 });
 
 // =======================================
-// LOOP DE RENDERIZAÇÃO
+// LOOP DE RENDERIZACAO
 // =======================================
-function render() {
-    // Executa a função continuamente
-    requestAnimationFrame(render);
-    // Limpa todo o canvas
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+function render() {    
+    requestAnimationFrame(render); // Executa a funcao continuamente    
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa todo o canvas
 
     // ===================================
-    // DESENHA O VÍDEO PRINCIPAL
+    // DESENHA O VIDEO PRINCIPAL
     // ===================================
     if (video.readyState >= 2) {
-        ctx.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
-
     // ===================================
     // DESENHA O OVERLAY
     // ===================================
-    if (overlayVideo.readyState >= 2) {
-        // Tamanho do overlay
-        const width = 250;
-        const height = 140;
-        // Centraliza horizontalmente
-        const x = (canvas.width - width) / 2;
-        // Centraliza verticalmente
-        const y = (canvas.height - height) / 2;
-        ctx.drawImage(
-            overlayVideo,
-            x,
-            y,
-            width,
-            height
-        );
+    if (overlayVideo.readyState >= 2) {        
+        const width = 250; // Tamanho do overlay horizontalmente
+        const height = 140; // Tamanho do overlay verticalmente
+        const x = (canvas.width - width) / 2; // Centraliza horizontalmente        
+        const y = (canvas.height - height) / 2; // Centraliza verticalmente
+        ctx.drawImage(overlayVideo, x, y, width, height);
     }
 }
 
