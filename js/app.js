@@ -17,7 +17,7 @@ chromaCanvas.width = 500; //Define resolucao de largura do canvas
 chromaCanvas.height = 500; //Define resolucao de altura do canvas
 const chromaStrength = 30; //Configuracao da intensidade da remocao da cor verde
 //BOTAO EXPORTAR
-const btnExportar = document.getElementById("btnExportar");
+const btExportar = document.getElementById("btExportar");
 
 // =======================================
 // AUDIO PRINCIPAL
@@ -155,7 +155,7 @@ render();
 // =======================================
 // EXPORTAR ARQUIVO COMPLETO (MP3 + VIDEO PRINCIPAL + INSCREVA-SE)
 // =======================================
-btnExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
+btExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
 
 async function exportVideo(){
     console.log("Iniciando exportação...");
