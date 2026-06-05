@@ -23,6 +23,8 @@ const btExportar = document.getElementById("btExportar");
 // AUDIO PRINCIPAL
 // =======================================
 const audio = document.createElement("audio"); //Cria o elemento de audio invisivel
+document.createElement("audio");
+document.body.appendChild(audio);
 audio.loop = false; //Remove o loop
 
 // =======================================
@@ -182,6 +184,12 @@ async function exportVideo(){
             stream.addTrack(track);
         });
     const recorder = new MediaRecorder(stream, {mimeType: "video/webm"}); //Criando midia recorder
+    recorder.onerror = (event) => {console.error("Erro Recorder", event);} //Caso ocorrer um erro, sera mostrado
+    console.log(MediaRecorder.isTypeSupported("video/webm"));
+    console.log(MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus"));
+    console.log(MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus"));
+    console.log("Tracks video: ", stream.getVideoTracks().length);
+    console.log("Tracks audio: ", stream.getAudioTracks().length);
     const chunks = []; //Guardar chunks
     recorder.ondataavailable = (event) => {
         chunks.push(event.data);
@@ -211,6 +219,7 @@ async function exportVideo(){
     video.play(); //Toca o video
     overlayVideo.pause(); 
     recorder.start(); //Inicia gravacao
+    console.log(recorder.state);
     console.log("Recorder iniciado.");
     console.log("Duracao do audio: ", audio.duration);
     console.log("Tempo de audio: ", audio.currentTime);
