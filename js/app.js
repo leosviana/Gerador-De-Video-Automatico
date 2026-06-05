@@ -206,6 +206,8 @@ async function exportVideo(){
     lastOverlayPlayed = false; //Reinicia flag de overlay do fim
     audio.play(); //Toca o audio
     recorder.start(); //Inicia gravacao
+    console.log("Audio Duration:", audio.duration);
+    console.log("Audio Current:", audio.currentTime);
     
     //Quando terminar...
     setTimeout(() => 
