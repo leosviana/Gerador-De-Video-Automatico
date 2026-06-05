@@ -12,9 +12,9 @@ let playingReverse = false; //Indica se o video esta voltando
 let reverseFPS = 30; //Velocidade de retorno
 //CHROMAKEY - CANVA DE VIDEO OVERLAY(INSCREVA-SE):
 const chromaCanvas = document.createElement("canvas"); //Canva invisivel para processar o overlay
-const chromaCtx = chromaCanvas.getContext("2d"); // Contexto 2D do canvas para desenhar imagens e videos do overlay
-chromaCanvas.width = 500; //Define resolucao de largura do canvas
-chromaCanvas.height = 500; //Define resolucao de altura do canvas
+const chromaCtx = chromaCanvas.getContext("2d", {willReadFrequently: true}); // Contexto 2D do canvas para desenhar imagens e videos do overlay
+chromaCanvas.width = 240; //Define resolucao de largura do canvas
+chromaCanvas.height = 140; //Define resolucao de altura do canvas
 const chromaStrength = 30; //Configuracao da intensidade da remocao da cor verde
 //BOTAO EXPORTAR
 const btExportar = document.getElementById("btExportar");
