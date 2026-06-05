@@ -182,9 +182,23 @@ async function exportVideo(){
         chunks.push(event.data);
     }
     recorder.onstop = async () => { //Avisa quando terminar
-        console.log("Render finalizado");
+        console.log("Render finalizado");        
+        const blob = new Blob(chunks, { //Juntar todos os pedacos gravados
+            type: "video/webm"
+        });        
+        const videoURL = URL.createObjectURL(blob); //Cria URL temporaria
+        const a = document.createElement("a"); //Cria link invisivel
+        a.href = videoURL; //Define URL
+        a.download = "video-exportado.webm"; //Video exportado
+        a.click(); //Simulad clique no link
+        URL.revokeObjectURL(videoURL);
+        console.log("Download iniciado");
     };
     audio.currentTime = 0; //Reinicia audio
+    video.currentTime = 0; //Reinicia video
+    overlayVideo.currentTime = 0; //Reinicia overlay
+    firstOverlayPlayed = false; //Reinicia flag de overlay do inicio
+    lastOverlayPlayed = false; //Reinicia flag de overlay do fim
     audio.play(); //Toca o audio
     recorder.start(); //Inicia gravacao
     
