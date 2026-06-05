@@ -159,7 +159,7 @@ btExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
 
 async function exportVideo(){
     console.log("Iniciando exportação...");
-
+    //STREAM CRIADO - Adicionando o video:
     const sourceWidth = video.videoWidth;
     const sourceHeight = video.videoHeight;
     const isVertical = sourceHeight > sourceWidth; //Verifica se o video e vertical
@@ -170,8 +170,10 @@ async function exportVideo(){
     const width = exportWidth;
     const height = exportHeight;
     const stream = canvas.captureStream(30); //Captura o canvas como video como 30 FPS
+    
+    //STREAM CRIADO - Adicionando o audio:
     const audioStream = audio.captureStream(); //Captura o audio MP3
-    audioStream //Adicionar audio ao stream
+    audioStream 
         .getAudioTracks() 
         .forEach(track => {
             stream.addTrack(track);
@@ -181,16 +183,19 @@ async function exportVideo(){
     recorder.ondataavailable = (event) => {
         chunks.push(event.data);
     }
+
+    //STREAM FINALIZADO:
     recorder.onstop = async () => { //Avisa quando terminar
         console.log("Render finalizado");        
         const blob = new Blob(chunks, { //Juntar todos os pedacos gravados
             type: "video/webm"
-        });        
+        });
+        //Gerando link invisivel para download:
         const videoURL = URL.createObjectURL(blob); //Cria URL temporaria
         const a = document.createElement("a"); //Cria link invisivel
         a.href = videoURL; //Define URL
         a.download = "video-exportado.webm"; //Video exportado
-        a.click(); //Simulad clique no link
+        a.click(); //Simular clique no link
         URL.revokeObjectURL(videoURL);
         console.log("Download iniciado");
     };
