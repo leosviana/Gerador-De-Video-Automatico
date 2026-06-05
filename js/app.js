@@ -72,7 +72,10 @@ audioInput.addEventListener("change", (event) =>{
     audioFile = event.target.files[0]; //Arquivo selecionado
     if(!audioFile) return; //Se nao existir arquivo de audio
     audio.src = URL.createObjectURL(audioFile); //Cria uma URL temporaria
-
+    audio.onloadedmetadata = () => { //Aguardar carregar audio
+        console.log("Audio carregado.");
+        console.log("Duracao: ", audio.duration);
+    };
 });
 
 // =======================================
@@ -205,14 +208,22 @@ async function exportVideo(){
     firstOverlayPlayed = false; //Reinicia flag de overlay do inicio
     lastOverlayPlayed = false; //Reinicia flag de overlay do fim
     audio.play(); //Toca o audio
+    video.play(); //Toca o video
+    overlayVideo.pause(); 
     recorder.start(); //Inicia gravacao
-    console.log("Audio Duration:", audio.duration);
-    console.log("Audio Current:", audio.currentTime);
+    console.log("Recorder iniciado.");
+    console.log("Duracao do audio: ", audio.duration);
+    console.log("Tempo de audio: ", audio.currentTime);
     
     //Quando terminar...
     setTimeout(() => 
         {
             recorder.stop();
+            console.log("Recorder parado.");
+            recorder.ondataavailable = (event) => {
+                console.log("Chunks: ", event.data.size);
+                chunks.push(event.data);
+            };
         },
         audio.duration * 1000
     );
