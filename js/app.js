@@ -1,8 +1,3 @@
-//FFMPEG
-const {FFmpeg} = FFmpegWASM; //Biblioteca FFmpeg carregada no CDN
-const ffmpeg = new FFmpeg(); //Instancia principal
-let ffmpegLoaded = false; //Controle para saber se já carregou
-
 const videoInput = document.getElementById("videoInput"); //Campo de upload do video principal
 const audioInput = document.getElementById("audioInput"); //Campo de upload do audio
 let videoFile = null; //Armazena o arquivo de video
@@ -28,10 +23,14 @@ const btExportar = document.getElementById("btExportar");
 // =======================================
 // CARREGA FFMPEG APENAS UMA VEZ
 // =======================================
+const {FFmpeg} = FFmpegWASM; //Biblioteca FFmpeg carregada no CDN
+const {fetchFile} = FFmpegUtil; //Obtem funcao utilitaria para converter arquivos
+const ffmpeg = new FFmpeg(); //Instancia principal do FFmpeg
+let ffmpegLoaded = false; //Controle para saber se já carregou
 async function loadFFmpeg(){
-    if (ffmpegLoaded) return;
+    if (ffmpegLoaded) return; //Se já carregou anteriormente...
     console.log("Carregando FFmpeg...");
-    await ffmpeg.load();
+    await ffmpeg.load(); //Faz download dos arquivos internos
     ffmpegLoaded = true;
     console.log("FFmpeg carregado.");
 }
@@ -191,99 +190,21 @@ btExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
 
 async function exportVideo(){
     console.log("Iniciando exportação...");
-    //STREAM CRIADO - Adicionando o video:
-    const sourceWidth = video.videoWidth;
-    const sourceHeight = video.videoHeight;
-    const isVertical = sourceHeight > sourceWidth; //Verifica se o video e vertical
-    const exportWidth = isVertical ? 1080 : 1920; //Formato video longo
-    const exportHeight = isVertical ? 1920 : 1080; //Formato video curto
-    const oldWidth = canvas.width; //Salva o tamanho altura atual
-    const oldHeight = canvas.height; //Salva o tamanho largura atual
-    const width = exportWidth;
-    const height = exportHeight;
-    const stream = canvas.captureStream(30); //Captura o canvas como video como 30 FPS
-
-    // ENVIA AUDIO PARA MEMORIA DO FFMPEG
-    await ffmpeg.writeFile(
-        "audio.mp3",
-        await fetchFile(audioFile)
-    );
-
-    // ENVIA VIDEO PARA MEMORIA DO FFMPEG
+    await loadFFmpeg(); //Garante que o FFmpeg seja carregado
+    //Envia o MP4 para a memória do FFmpeg
     await ffmpeg.writeFile(
         "video.mp4",
         await fetchFile(videoFile)
     );
-
-    // ENVIAR OVERLAY PARA MEMORIA DO FFMPEG
-    const overlayResponse = await fetch("assets/se-inscreva.mp4");
+    //Envia o MP3 para a memória do FFmpeg
     await ffmpeg.writeFile(
-        "overlay.mp4",
-        new Uint8Array(
-            await overlayResponse.arrayBuffer()
-        )
+        "audio.mp3",
+        await fetchFile(videoFile)
     );
-    
-    //STREAM CRIADO - Adicionando o audio:
-    const audioStream = audio.captureStream(); //Captura o audio MP3
-    audioStream 
-        .getAudioTracks() 
-        .forEach(track => {
-            stream.addTrack(track);
-        });
-    const recorder = new MediaRecorder(stream, {mimeType: "video/webm"}); //Criando midia recorder
-    recorder.onerror = (event) => {console.error("Erro Recorder", event);} //Caso ocorrer um erro, sera mostrado
-    console.log(MediaRecorder.isTypeSupported("video/webm"));
-    console.log(MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus"));
-    console.log(MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus"));
-    console.log("Tracks video: ", stream.getVideoTracks().length);
-    console.log("Tracks audio: ", stream.getAudioTracks().length);
-    const chunks = []; //Guardar chunks
-    recorder.ondataavailable = (event) => {
-        chunks.push(event.data);
-    }
+    console.log("Arquivos enviados para o FFmpeg.");
 
-    //STREAM FINALIZADO:
-    recorder.onstop = async () => { //Avisa quando terminar
-        console.log("Render finalizado");        
-        const blob = new Blob(chunks, { //Juntar todos os pedacos gravados
-            type: "video/webm"
-        });
-        //Gerando link invisivel para download:
-        const videoURL = URL.createObjectURL(blob); //Cria URL temporaria
-        const a = document.createElement("a"); //Cria link invisivel
-        a.href = videoURL; //Define URL
-        a.download = "video-exportado.webm"; //Video exportado
-        a.click(); //Simular clique no link
-        URL.revokeObjectURL(videoURL);
-        console.log("Download iniciado");
-    };
-    audio.currentTime = 0; //Reinicia audio
-    video.currentTime = 0; //Reinicia video
-    overlayVideo.currentTime = 0; //Reinicia overlay
-    firstOverlayPlayed = false; //Reinicia flag de overlay do inicio
-    lastOverlayPlayed = false; //Reinicia flag de overlay do fim
-    audio.play(); //Toca o audio
-    video.play(); //Toca o video
-    overlayVideo.pause(); 
-    recorder.start(); //Inicia gravacao
-    console.log(recorder.state);
-    console.log("Recorder iniciado.");
-    console.log("Duracao do audio: ", audio.duration);
-    console.log("Tempo de audio: ", audio.currentTime);
-    
-    //Quando terminar...
-    setTimeout(() => 
-        {
-            recorder.stop();
-            console.log("Recorder parado.");
-            recorder.ondataavailable = (event) => {
-                console.log("Chunks: ", event.data.size);
-                chunks.push(event.data);
-            };
-        },
-        audio.duration * 1000
-    );
+    //Comandos FFMPEG
+    await ffmpeg
+
 
 }
-
