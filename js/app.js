@@ -189,22 +189,56 @@ render();
 btExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
 
 async function exportVideo(){
+    //Validando se os arquivos existem
+    if (!videoFile){
+        alert("Selecione um arquivo de vídeo mp4!");
+        return;
+    }
+    if(!audioFile){
+        alert("Selecione um arquivo de audio mp3!");
+        return;
+    }
+
     console.log("Iniciando exportação...");
     await loadFFmpeg(); //Garante que o FFmpeg seja carregado
-    //Envia o MP4 para a memória do FFmpeg
+    //ARQUIVO MP4 - Envia o MP4 para a memória do FFmpeg
     await ffmpeg.writeFile(
         "video.mp4",
         await fetchFile(videoFile)
-    );
-    //Envia o MP3 para a memória do FFmpeg
+    );    
+    //ARQUIVO MP3 - Envia o MP3 para a memória do FFmpeg
     await ffmpeg.writeFile(
         "audio.mp3",
         await fetchFile(videoFile)
     );
     console.log("Arquivos enviados para o FFmpeg.");
 
-    //Comandos FFMPEG
-    await ffmpeg
+    //FFMPEG - COMANDOS PARA PROCESSAR OS ARQUIVOS
+    //i         --> Identifica os arquivos
+    //-c:v copy --> Não processa video
+    //-c:a aac  --> Converte audio em AAC
+    //shortest  --> Termina quando o menor arquivo acabar
+    await ffmpeg.exec([
+        "-i", "video.mp4",
+        "-i", "audio.mp3",
+        "-c:v", "copy",
+        "-c:v", "aac",
+        "-shortest",
+        "saida.mp4"
+    ]);
+    console.log("MP4 gerado pelo FFMPEG.");
+
+    const data = await ffmpeg.readFile("saida.mp4"); //Lê arquivo final gerado
+    const blob = new Blob( //Criar blob para download em formato MP4
+        [data.buffer],{type: "video/mp4"}
+    );
+    const url = URL.createObjectURL(blob); //Gera o link temporário
+    const a = document.createElement("a"); //Cria elemento de link invisível na página
+    a.href = url; //Define que o elemento recebe o objeto criado pelo blob
+    a.download = "video-final.mp4"; //Cria opção para realiza o download do link
+    a.click(); //Clicando no link para iniciar o download
+    URL.revokeObjectURL(url); //Limpa a memória
+    console.log("Download iniciado.");
 
 
 }
