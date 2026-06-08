@@ -24,13 +24,18 @@ const btExportar = document.getElementById("btExportar");
 // CARREGA FFMPEG APENAS UMA VEZ
 // =======================================
 const {FFmpeg} = FFmpegWASM; //Biblioteca FFmpeg carregada no CDN
-const {fetchFile} = FFmpegUtil; //Obtem funcao utilitaria para converter arquivos
+//const {fetchFile} = FFmpegUtil; //Obtem funcao utilitaria para converter arquivos
 const ffmpeg = new FFmpeg(); //Instancia principal do FFmpeg
 let ffmpegLoaded = false; //Controle para saber se já carregou
 async function loadFFmpeg(){
     if (ffmpegLoaded) return; //Se já carregou anteriormente...
     console.log("Carregando FFmpeg...");
-    await ffmpeg.load(); //Faz download dos arquivos internos
+    await ffmpeg.load({ //Faz download dos arquivos internos: https://app.unpkg.com/@ffmpeg/core@0.12.6
+        coreURL: "./ffmpeg/ffmpeg-core.js",
+        wasmURL: "./ffmpeg/ffmpeg-core.wasm",
+        workerURL: "./ffmpeg/ffmpeg-core.worker.js"
+    }); 
+    
     ffmpegLoaded = true;
     console.log("FFmpeg carregado.");
 }
@@ -190,12 +195,12 @@ btExportar.addEventListener("click", exportVideo); //Clique no botao de exportar
 
 async function exportVideo(){
     //Validando se os arquivos existem
-    if (!videoFile){
-        alert("Selecione um arquivo de vídeo mp4!");
-        return;
-    }
     if(!audioFile){
         alert("Selecione um arquivo de audio mp3!");
+        return;
+    }
+    if (!videoFile){
+        alert("Selecione um arquivo de vídeo mp4!");
         return;
     }
 
