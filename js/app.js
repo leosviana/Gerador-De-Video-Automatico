@@ -1,3 +1,8 @@
+//FFMPEG
+const {FFmpeg} = FFmpegWASM; //Biblioteca FFmpeg carregada no CDN
+const ffmpeg = new FFmpeg(); //Instancia principal
+let ffmpegLoaded = false; //Controle para saber se já carregou
+
 const videoInput = document.getElementById("videoInput"); //Campo de upload do video principal
 const audioInput = document.getElementById("audioInput"); //Campo de upload do audio
 let videoFile = null; //Armazena o arquivo de video
@@ -16,8 +21,20 @@ const chromaCtx = chromaCanvas.getContext("2d", {willReadFrequently: true}); // 
 chromaCanvas.width = 240; //Define resolucao de largura do canvas
 chromaCanvas.height = 140; //Define resolucao de altura do canvas
 const chromaStrength = 30; //Configuracao da intensidade da remocao da cor verde
+const overlayInput = document.getElementById("overlayScale"); //Escala inicial do overlay
 //BOTAO EXPORTAR
 const btExportar = document.getElementById("btExportar");
+
+// =======================================
+// CARREGA FFMPEG APENAS UMA VEZ
+// =======================================
+async function loadFFmpeg(){
+    if (ffmpegLoaded) return;
+    console.log("Carregando FFmpeg...");
+    await ffmpeg.load();
+    ffmpegLoaded = true;
+    console.log("FFmpeg carregado.");
+}
 
 // =======================================
 // AUDIO PRINCIPAL
@@ -48,6 +65,18 @@ let firstOverlayPlayed = false; //Controle para saber se o primeiro overlay foi 
 let lastOverlayPlayed = false; //Controle para saber se o segundo overlay foi executado
 
 // =======================================
+// FUNÇÃO PARA EXECUTAR OVERLAY
+// =======================================
+function playOverlay(){
+    overlayVideo.pause(); //Garante que o video pare antes de reiniciar
+    overlayVideo.currentTime = 0; //Volta para o primeiro frame
+    overlayVideo.play()
+        .catch(error => {
+            console.log("Erro ao reproduzir overlay: ", error);
+        });
+}
+
+// =======================================
 // UPLOAD DO VIDEO PRINCIPAL
 // =======================================
 videoInput.addEventListener("change", (event) => {    
@@ -61,9 +90,8 @@ videoInput.addEventListener("change", (event) => {
         document.querySelector(".preview-container") //Ajusta automaticamente a proporcao do preview
             .style.aspectRatio = `${video.videoWidth}/${video.videoHeight}`;
     video.play(); //Inicia video principal
-    overlayVideo.currentTime = 0; //Reinicia overlay no inicio
-    overlayVideo.play(); //Executa overlay inicial
-    firstOverlayPlayed = true; //Marca que executou o overlay
+    playOverlay(); //Executa overlay
+    firstOverlayPlayed = true; //Primeiro overlay
     }
 });
 
@@ -125,9 +153,8 @@ function render() {
         const triggerTime = duration - 20; //Momento em que o overlay deve aparecer
         //Se o tempo atual for maior ou igual ao tempo do overlay aparecer, e caso ele nao tenha sido executado
         if(currentTime >= triggerTime && !lastOverlayPlayed){
-            overlayVideo.currentTime = 0; //Reinicia o video overlay
-            overlayVideo.play(); //Executa novamente
-            lastOverlayPlayed = true; //Marca que foi executado impedindo novas execucoes
+            playOverlay(); //Executa overlay
+            lastOverlayPlayed = true; //Ultimo overlay
         }
     }
     //Se overlay estiver sido iniciado e diferente de pausado e diferente de finalizado...
@@ -147,8 +174,8 @@ function render() {
             }
         }        
         chromaCtx.putImageData(frame, 0, 0); //Atualiza a imagem processada
-        const width = 250; //Define tamanho de largura do overlay
-        const height = 140; //Define tamanho de altura do overlay
+        const width = chromaCanvas.width * parseFloat(overlayInput.value); //Escala de altura do overlay
+        const height = chromaCanvas.height * parseFloat(overlayInput.value); //Escala de largura do overlay
         const x = (canvas.width - width) / 2; //Centraliza horizontalmente
         const y = (canvas.height - height) / 2; //Centraliza verticalmente
         ctx.drawImage(chromaCanvas, x, y, width, height); //Desenha o resultado final sem a cor verde
@@ -175,6 +202,27 @@ async function exportVideo(){
     const width = exportWidth;
     const height = exportHeight;
     const stream = canvas.captureStream(30); //Captura o canvas como video como 30 FPS
+
+    // ENVIA AUDIO PARA MEMORIA DO FFMPEG
+    await ffmpeg.writeFile(
+        "audio.mp3",
+        await fetchFile(audioFile)
+    );
+
+    // ENVIA VIDEO PARA MEMORIA DO FFMPEG
+    await ffmpeg.writeFile(
+        "video.mp4",
+        await fetchFile(videoFile)
+    );
+
+    // ENVIAR OVERLAY PARA MEMORIA DO FFMPEG
+    const overlayResponse = await fetch("assets/se-inscreva.mp4");
+    await ffmpeg.writeFile(
+        "overlay.mp4",
+        new Uint8Array(
+            await overlayResponse.arrayBuffer()
+        )
+    );
     
     //STREAM CRIADO - Adicionando o audio:
     const audioStream = audio.captureStream(); //Captura o audio MP3

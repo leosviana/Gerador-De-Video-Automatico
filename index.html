@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <h3>Gerador De Vídeo Automático - V4.6</h3>  
+        <h3>Gerador De Vídeo Automático - V5</h3>  
         <div class="upload-area">            
             <label>Arquivo MP3:</label><br>
             <input type="file" id="audioInput" accept=".mp3"><br>
@@ -19,6 +19,13 @@
                 <option value="loop">Loop</option>
                 <option value="reverse">Reverso</option>
             </select>
+            <label>Tamanho Overlay: </label>
+            <input type="range" id="overlayScale" min="0.5" max="5" step="0.1" value="2">
+            <!-- range: Cria um controle deslizante (slider) para arrastar a bolinha para esquerda ou direita -->
+            <!-- min = 0.5 é o menor valor permitido, nesse caso 0.5 = 50% do tamanho original / 1.0 = tamanho original / 2.0 = dobro do tamanho -->
+            <!-- max = 4 é o maior valor permitido (4 vezes o tamanho original) -->
+            <!-- step = 0.1 define de quanto em quanto o valor pode variar (0.1 significa: 0.5, 0.6, 0.7...) -->
+            <!-- value = 2 é o valor inicial quando abre a página -->
         </div>
         <div class="preview-container">
             <canvas id="previewCanvas"></canvas>
@@ -29,6 +36,11 @@
         </div>        
     </div>
 
+<!-- FFMPEG WASM - Biblioteca responsável por gerar MP4  -->
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
+<!-- Utilitários do FFMPEG -->
+<script scr="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+<!-- Meu arquivo JS -->
 <script src="js/app.js"></script>
 
 </body>
