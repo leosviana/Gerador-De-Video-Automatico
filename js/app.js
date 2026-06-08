@@ -23,20 +23,17 @@ const btExportar = document.getElementById("btExportar");
 // =======================================
 // CARREGA FFMPEG APENAS UMA VEZ
 // =======================================
-const {FFmpeg} = FFmpegWASM; //Biblioteca FFmpeg carregada no CDN
+const {createFFmpeg, fetchFile} = FFmpeg; //Biblioteca FFmpeg carregada no CDN
 //const {fetchFile} = FFmpegUtil; //Obtem funcao utilitaria para converter arquivos
-const ffmpeg = new FFmpeg(); //Instancia principal do FFmpeg
+const ffmpeg = createFFmpeg({ //Instancia principal do FFmpeg
+    log: true //Mostra log no console
+}); 
 let ffmpegLoaded = false; //Controle para saber se já carregou
 async function loadFFmpeg(){
     if (ffmpegLoaded) return; //Se já carregou anteriormente...
     console.log("Carregando FFmpeg...");
-    await ffmpeg.load({ //Faz download dos arquivos internos: https://app.unpkg.com/@ffmpeg/core@0.12.6
-        coreURL: "./ffmpeg/ffmpeg-core.js",
-        wasmURL: "./ffmpeg/ffmpeg-core.wasm",
-        workerURL: "./ffmpeg/ffmpeg-core.worker.js"
-    }); 
-    
-    ffmpegLoaded = true;
+    await ffmpeg.load(); //Faz download dos arquivos internos: https://app.unpkg.com/@ffmpeg/core@0.11.0/files/dist
+    ffmpegLoaded = true; 
     console.log("FFmpeg carregado.");
 }
 
